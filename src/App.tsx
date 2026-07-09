@@ -1,121 +1,134 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import {
+  AppBar,
+  Box,
+  Container,
+  Divider,
+  Paper,
+  Toolbar,
+  Typography,
+  Button,
+  Chip,
+} from '@mui/material'
+import { Menu as MenuIcon } from '@mui/icons-material'
+import type { Resource } from './types'
+import { RESOURCES } from './data'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      {/* Header */}
+      <AppBar position="sticky" color="default" elevation={1}>
+        <Container maxWidth="lg">
+          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+            <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
+              Wellness Directory
+            </Typography>
+            <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1 }}>
+              <Button color="inherit">Browse</Button>
+              <Button color="inherit">Categories</Button>
+              <Button variant="contained">Submit</Button>
+            </Box>
+            <Button
+              sx={{ display: { xs: 'flex', sm: 'none' } }}
+              onClick={() => setMobileOpen((o) => !o)}
+            >
+              <MenuIcon />
+            </Button>
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      {/* Mobile nav drawer (inline) */}
+      {mobileOpen && (
+        <Paper sx={{ display: { xs: 'block', sm: 'none' }, p: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Button>Browse</Button>
+            <Button>Categories</Button>
+            <Divider />
+            <Button variant="contained" fullWidth>Submit</Button>
+          </Box>
+        </Paper>
+      )}
+
+      {/* Main content */}
+      <Container maxWidth="lg" sx={{ flex: 1, py: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
+          Explore Resources
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+          Curated wellness content - podcasts, articles, recipes, and more.
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
+            gap: 2,
+          }}
         >
-          Count is {count}
-        </button>
-      </section>
+          {RESOURCES.map((r) => (
+            <ResourceCard key={r.id} resource={r} />
+          ))}
+        </Box>
+      </Container>
 
-      <div className="ticks"></div>
+      {/* Footer */}
+      <Divider />
+      <Box component="footer" sx={{ py: 3, textAlign: 'center' }}>
+        <Typography variant="body2" color="text.secondary">
+          &copy; {new Date().getFullYear()} Wellness Directory
+        </Typography>
+      </Box>
+    </Box>
+  )
+}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+/* Resource card */
+function ResourceCard({ resource }: { resource: Resource }) {
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1.5,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+      }}
+    >
+      <Box
+        sx={{
+          width: '100%',
+          aspectRatio: '16/9',
+          borderRadius: 1,
+          overflow: 'hidden',
+          bgcolor: 'grey.200',
+        }}
+      >
+        <img
+          src={resource.thumbnail}
+          alt={resource.title}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Chip label={resource.category} size="small" variant="outlined" />
+        <Typography variant="caption" color="text.secondary">
+          {resource.duration} min
+        </Typography>
+      </Box>
+      <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 600 }}>
+        {resource.title}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" noWrap>
+        {resource.description}
+      </Typography>
+    </Paper>
   )
 }
 
