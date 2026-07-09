@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { ResourceCard } from './ResourceCard'
 import { makeResource } from '../test/fixtures'
 
@@ -53,5 +54,17 @@ describe('ResourceCard', () => {
     expect(screen.getByText('three')).toBeInTheDocument()
     expect(screen.queryByText('four')).not.toBeInTheDocument()
     expect(screen.queryByText('five')).not.toBeInTheDocument()
+  })
+
+  it('opens a details dialog with the upload date when clicked', async () => {
+    render(
+      <ResourceCard resource={makeResource({ title: 'Deep Focus', date_uploaded: '2025-06-22' })} />,
+    )
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /view details for Deep Focus/i }))
+
+    const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).getByText(/22 June 2025/)).toBeInTheDocument()
   })
 })
