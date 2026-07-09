@@ -1,6 +1,7 @@
 import { Box, Container, Typography } from '@mui/material'
-import { Navbar, ResourceGrid, Footer } from './components'
+import { Navbar, ResourceCategorySection, Footer } from './components'
 import { RESOURCES } from './data'
+import { groupByCategory } from './utils/groupByCategory'
 
 function App() {
   return (
@@ -21,7 +22,13 @@ function App() {
           Curated wellness content - podcasts, articles, recipes, and more.
         </Typography>
 
-        <ResourceGrid resources={RESOURCES} />
+        {groupByCategory(RESOURCES).map((group) => (
+          <ResourceCategorySection
+            key={group.category}
+            category={group.category}
+            resources={group.resources}
+          />
+        ))}
       </Container>
 
       <Footer />

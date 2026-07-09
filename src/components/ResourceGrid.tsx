@@ -6,20 +6,24 @@ interface ResourceGridProps {
   resources: Resource[]
 }
 
-/** Responsive card grid: 1 column on mobile, 2 at `sm`, 3 at `md` and up. */
+/**
+ * Responsive card grid: a single full-width column on mobile, then auto-fitting
+ * fixed-width tracks that are centred as a group — so a lone card (or a partial
+ * final row) sits in the middle rather than hugging the left edge.
+ */
 export function ResourceGrid({ resources }: ResourceGridProps) {
   return (
     <Box
       sx={{
         display: 'grid',
         gap: { xs: 2, sm: 2.5, md: 3 },
-        // minmax(0, 1fr) instead of 1fr so tracks can shrink to the
-        // available width — plain 1fr resolves its min to the item's
-        // min-content, which lets cards overflow the container gutter.
+        justifyContent: 'center',
+        // xs: one full-width column (minmax(0, 1fr) so cards can't overflow the
+        // gutter via their min-content). sm+: as many ~280–340px tracks as fit,
+        // collapsing empty tracks (auto-fit) and centred via justifyContent.
         gridTemplateColumns: {
           xs: 'minmax(0, 1fr)',
-          sm: 'repeat(2, minmax(0, 1fr))',
-          md: 'repeat(3, minmax(0, 1fr))',
+          sm: 'repeat(auto-fit, minmax(280px, 340px))',
         },
       }}
     >
