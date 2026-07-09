@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Box, Container, TextField, Typography } from '@mui/material'
+import { Box, Container, InputAdornment, TextField, Typography } from '@mui/material'
+import { Search as SearchIcon } from '@mui/icons-material'
 import { Navbar, ResourceCategorySection, Footer } from './components'
 import { RESOURCES } from './data'
 import { groupByCategory } from './utils/groupByCategory'
@@ -23,21 +24,34 @@ function App() {
           variant="h4"
           component="h1"
           gutterBottom
-          sx={{ fontWeight: 700, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}
+          sx={{ fontWeight: 800, fontSize: { xs: '1.75rem', sm: '2.375rem' }, textAlign: 'center' }}
         >
           Explore Resources
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: { xs: 2, sm: 3 } }}>
-          Curated wellness content - podcasts, articles, recipes, and more.
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ mb: { xs: 3, sm: 4 }, textAlign: 'center' }}
+        >
+          Curated wellness content — podcasts, articles, recipes, and more.
         </Typography>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: { xs: 3, sm: 4 } }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: { xs: 4, sm: 5 } }}>
           <TextField
             label="Search resources"
             placeholder="Search by title or tag"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            sx={{ width: '100%', maxWidth: 480 }}
+            sx={{ width: '100%', maxWidth: 480, bgcolor: 'background.paper' }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" color="action" />
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
         </Box>
 

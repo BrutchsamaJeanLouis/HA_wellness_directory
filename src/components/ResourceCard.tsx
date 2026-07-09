@@ -42,8 +42,12 @@ export function ResourceCard({ resource }: ResourceCardProps) {
           height: '100%',
           textAlign: 'left',
           cursor: 'pointer',
-          transition: 'box-shadow 150ms, border-color 150ms',
-          '&:hover': { boxShadow: 3, borderColor: 'primary.main' },
+          transition: 'box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease',
+          '&:hover': {
+            boxShadow: 6,
+            borderColor: 'primary.main',
+            transform: 'translateY(-4px)',
+          },
           '&:focus-visible': {
             outline: '2px solid',
             outlineColor: 'primary.main',
