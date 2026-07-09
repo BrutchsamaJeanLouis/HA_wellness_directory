@@ -5,6 +5,9 @@ interface ResourceCardProps {
   resource: Resource
 }
 
+/** The brief caps the number of tags shown per resource. */
+const MAX_TAGS = 3
+
 /** Single resource tile: thumbnail, category/duration meta, title and blurb. */
 export function ResourceCard({ resource }: ResourceCardProps) {
   return (
@@ -48,6 +51,13 @@ export function ResourceCard({ resource }: ResourceCardProps) {
       <Typography variant="body2" color="text.secondary" noWrap>
         {resource.description}
       </Typography>
+      {resource.tags.length > 0 && (
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 'auto' }}>
+          {resource.tags.slice(0, MAX_TAGS).map((tag) => (
+            <Chip key={tag} label={tag} size="small" />
+          ))}
+        </Box>
+      )}
     </Paper>
   )
 }

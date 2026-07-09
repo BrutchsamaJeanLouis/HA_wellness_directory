@@ -30,4 +30,28 @@ describe('ResourceCard', () => {
     render(<ResourceCard resource={makeResource({ description: 'Sleep research explained' })} />)
     expect(screen.getByText('Sleep research explained')).toBeInTheDocument()
   })
+
+  it("renders the resource's tags", () => {
+    render(
+      <ResourceCard
+        resource={makeResource({ tags: ['wellbeing', 'mindfulness', 'relaxation'] })}
+      />,
+    )
+    expect(screen.getByText('wellbeing')).toBeInTheDocument()
+    expect(screen.getByText('mindfulness')).toBeInTheDocument()
+    expect(screen.getByText('relaxation')).toBeInTheDocument()
+  })
+
+  it('renders no more than 3 tags even when more are supplied', () => {
+    render(
+      <ResourceCard
+        resource={makeResource({ tags: ['one', 'two', 'three', 'four', 'five'] })}
+      />,
+    )
+    expect(screen.getByText('one')).toBeInTheDocument()
+    expect(screen.getByText('two')).toBeInTheDocument()
+    expect(screen.getByText('three')).toBeInTheDocument()
+    expect(screen.queryByText('four')).not.toBeInTheDocument()
+    expect(screen.queryByText('five')).not.toBeInTheDocument()
+  })
 })

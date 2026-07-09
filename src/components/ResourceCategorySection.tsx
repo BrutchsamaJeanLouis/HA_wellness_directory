@@ -21,7 +21,12 @@ export function ResourceCategorySection({
         id={headingId}
         variant="h5"
         component="h2"
-        sx={{ fontWeight: 700, mb: { xs: 1.5, sm: 2 }, fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+        sx={{
+          fontWeight: 700,
+          mb: { xs: 1.5, sm: 2 },
+          fontSize: { xs: '1.25rem', sm: '1.5rem' },
+          textAlign: 'center',
+        }}
       >
         {category}
       </Typography>
