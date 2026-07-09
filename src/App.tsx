@@ -4,73 +4,149 @@ import {
   Box,
   Container,
   Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
   Paper,
   Toolbar,
   Typography,
   Button,
   Chip,
 } from '@mui/material'
-import { Menu as MenuIcon } from '@mui/icons-material'
+import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material'
 import type { Resource } from './types'
 import { RESOURCES } from './data'
 
+const NAV_LINKS = ['Browse', 'Categories']
+
+/* ── App ── */
+
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const closeDrawer = () => setMobileOpen(false)
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Header */}
       <AppBar position="sticky" color="default" elevation={1}>
         <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
+          <Toolbar disableGutters sx={{ justifyContent: 'space-between', gap: 1 }}>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ fontWeight: 700, fontSize: { xs: '1.05rem', sm: '1.25rem' } }}
+            >
               Wellness Directory
             </Typography>
+
+            {/* Desktop nav — hidden below sm */}
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1 }}>
-              <Button color="inherit">Browse</Button>
-              <Button color="inherit">Categories</Button>
+              {NAV_LINKS.map((link) => (
+                <Button key={link} color="inherit">
+                  {link}
+                </Button>
+              ))}
               <Button variant="contained">Submit</Button>
             </Box>
-            <Button
-              sx={{ display: { xs: 'flex', sm: 'none' } }}
-              onClick={() => setMobileOpen((o) => !o)}
+
+            {/* Hamburger — shown only below sm */}
+            <IconButton
+              edge="end"
+              color="inherit"
+              aria-label="open navigation menu"
+              onClick={() => setMobileOpen(true)}
+              sx={{ display: { xs: 'inline-flex', sm: 'none' } }}
             >
               <MenuIcon />
-            </Button>
+            </IconButton>
           </Toolbar>
         </Container>
       </AppBar>
 
-      {/* Mobile nav drawer (inline) */}
-      {mobileOpen && (
-        <Paper sx={{ display: { xs: 'block', sm: 'none' }, p: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Button>Browse</Button>
-            <Button>Categories</Button>
-            <Divider />
-            <Button variant="contained" fullWidth>Submit</Button>
-          </Box>
-        </Paper>
-      )}
+      {/* Mobile navigation drawer */}
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={closeDrawer}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: 'block', sm: 'none' },
+          '& .MuiDrawer-paper': {
+            width: '80%',
+            maxWidth: 320,
+            boxSizing: 'border-box',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            px: 2,
+            py: 1.5,
+          }}
+        >
+          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+            Menu
+          </Typography>
+          <IconButton aria-label="close navigation menu" onClick={closeDrawer}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <Divider />
+        <List>
+          {NAV_LINKS.map((link) => (
+            <ListItem key={link} disablePadding>
+              <ListItemButton onClick={closeDrawer}>
+                <ListItemText primary={link} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Box sx={{ px: 2, pt: 1 }}>
+          <Button variant="contained" fullWidth onClick={closeDrawer}>
+            Submit
+          </Button>
+        </Box>
+      </Drawer>
 
       {/* Main content */}
-      <Container maxWidth="lg" sx={{ flex: 1, py: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
+      <Container
+        maxWidth="lg"
+        sx={{ flex: 1, py: { xs: 3, sm: 4 } }}
+      >
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{ fontWeight: 700, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}
+        >
           Explore Resources
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: { xs: 2, sm: 3 } }}>
           Curated wellness content - podcasts, articles, recipes, and more.
         </Typography>
 
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
-            gap: 2,
+            gap: { xs: 2, sm: 2.5, md: 3 },
+            // minmax(0, 1fr) instead of 1fr so tracks can shrink to the
+            // available width — plain 1fr resolves its min to the item's
+            // min-content, which lets cards overflow the container gutter.
+            gridTemplateColumns: {
+              xs: 'minmax(0, 1fr)',
+              sm: 'repeat(2, minmax(0, 1fr))',
+              md: 'repeat(3, minmax(0, 1fr))',
+            },
           }}
         >
           {RESOURCES.map((r) => (
-            <ResourceCard key={r.id} resource={r} />
+            <ResourceCardItem key={r.id} resource={r} />
           ))}
         </Box>
       </Container>
@@ -86,8 +162,9 @@ function App() {
   )
 }
 
-/* Resource card */
-function ResourceCard({ resource }: { resource: Resource }) {
+/* ── Resource card item ── */
+
+function ResourceCardItem({ resource }: { resource: Resource }) {
   return (
     <Paper
       elevation={0}
@@ -99,12 +176,13 @@ function ResourceCard({ resource }: { resource: Resource }) {
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: 2,
+        height: '100%',
       }}
     >
       <Box
         sx={{
           width: '100%',
-          aspectRatio: '16/9',
+          aspectRatio: '16 / 9',
           borderRadius: 1,
           overflow: 'hidden',
           bgcolor: 'grey.200',
@@ -113,7 +191,7 @@ function ResourceCard({ resource }: { resource: Resource }) {
         <img
           src={resource.thumbnail}
           alt={resource.title}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
